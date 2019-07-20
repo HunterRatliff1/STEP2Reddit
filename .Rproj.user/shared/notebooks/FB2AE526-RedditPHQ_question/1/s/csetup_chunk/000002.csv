@@ -1,0 +1,8 @@
+"0","knitr::opts_chunk$set(collapse = TRUE, warning=FALSE, message=F, tidy=TRUE) "
+"0","suppressPackageStartupMessages(require(tidyverse))"
+"0","suppressPackageStartupMessages(require(ggthemes))"
+"0","suppressPackageStartupMessages(require(lubridate))"
+"0","suppressPackageStartupMessages(require(stringr))"
+"0","# Might just be a problem on my system, but I have to run this code"
+"0","# to set the timezone so lubridate will work"
+"0","Sys.setenv(TZ=""America/Chicago"")"

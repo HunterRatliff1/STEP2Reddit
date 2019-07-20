@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "options <- c(\"UWSA 1\"=\"UW_1\", \"UWSA 2\"=\"UW_2\",\n             \"UW First pass\"=\"UW_FP\", \"Goal score\"=\"Goal\",\n             \"NBME #6\"=\"NBME_6\", \"NBME #7\"=\"NBME_7\",\n             \"NBME #8\"=\"NBME_8\")\ntoRemove <- c()\n\nif(!is.numeric(input$UW_1)) {toRemove <- c(toRemove, \"UW_1\")}\nif(!is.numeric(input$UW_2)) {toRemove <- c(toRemove, \"UW_2\")}\nif(!is.numeric(input$UW_FP)) {toRemove <- c(toRemove, \"UW_FP\")}\nif(!is.numeric(input$Goal)) {toRemove <- c(toRemove, \"Goal\")}\nif(!is.numeric(input$NBME_6)) {toRemove <- c(toRemove, \"NBME_6\")}\nif(!is.numeric(input$NBME_7)) {toRemove <- c(toRemove, \"NBME_7\")}\nif(!is.numeric(input$NBME_8)) {toRemove <- c(toRemove, \"NBME_8\")}\n\nsetdiff(options, toRemove)\n",
+    "created" : 1563567612438.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "3950831804",
+    "id" : "2D9DA080",
+    "lastKnownWriteTime" : 4294967302,
+    "last_content_update" : 1563568567716,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

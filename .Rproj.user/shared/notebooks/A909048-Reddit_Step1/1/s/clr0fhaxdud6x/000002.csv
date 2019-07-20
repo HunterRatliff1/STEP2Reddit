@@ -1,0 +1,15 @@
+"0","```r
+lm(STEP1 ~ NBME15 + NBME16 + NBME17 + NBME18 +
+     NBME19 + UWSA1 + UWSA2 - 1, data = reddit) %>% 
+  summary()
+
+lm(STEP1 ~ NBME15 +  UWSA1 - 1, data = reddit) %>% summary()
+lm(STEP1 ~ NBME15 + dd_15 + UWSA1 + dd_1 - 1, data = reddit) %>% summary()
+
+reddit %>% select(STEP1, NBME15, NBME16, UWSA1) %>% # plot()
+  cor(use = \"pairwise.complete.obs\") %>% corrplot(method=\"number\")
+
+reddit %>% select(STEP1, NBME15, NBME16, NBME17, NBME18, NBME19,  UWSA1, UWSA2) %>% # plot()
+  cor(use = \"pairwise.complete.obs\") %>% corrplot(method=\"number\")
+
+```"

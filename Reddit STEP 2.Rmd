@@ -1,0 +1,174 @@
+---
+title: "Reddit STEP 2"
+author: "Hunter Ratliff, @HunterRatliff1"
+date: "7/15/2019"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)        # Silences most chunk outputs
+
+## Ste time
+# Sys.setenv(TZ="America/Chicago")    
+
+suppressPackageStartupMessages(require(tidyverse))
+require(ggthemes)
+require(lubridate)
+require(stringr)
+require(ggrepel)
+require(kableExtra)
+require(visreg)
+require(corrplot)
+require(kableExtra)
+require(gridExtra)
+# library(rhandsontable)
+require(shiny)
+
+# Get data
+reddit <- readr::read_csv("Step2CKSurvey.csv", na = c("", "NA", "#N/A")) 
+
+## Ste time
+# Sys.setenv(TZ="America/Chicago")   
+reddit <- reddit %>%
+  mutate(
+    Date_StudyStart = mdy(Date_StudyStart),
+    STEP2.date      = mdy(STEP2.date),
+    UW_FirstPass    = UW_FirstPass/100
+  ) %>% 
+  rename(UW_FP=UW_FirstPass)
+# reddit <- readr::read_rds("redditSTEP1.rds")
+```
+
+```{r}
+fluidRow(
+  column(3, inputPanel(
+    checkboxGroupInput("modelVars", h3("Variables for model"), inline=F, width="100%",
+                       selected = c("UW First pass"="UW_FP"),
+                       choices = c("UWSA 1"="UW_1", "UWSA 2"="UW_2", 
+                                   "UW First pass"="UW_FP", "Goal score"="Goal",
+                                   "NBME #6"="NBME_6", "NBME #7"="NBME_7", 
+                                   "NBME #8"="NBME_8"))
+  )),
+  column(9, inputPanel(
+    numericInput("UW1", label="UWSA 1", value = NA),
+    numericInput("UW2", label="UWSA 2", value = NA),
+    numericInput("UWfp", label="UW First pass (%)", value = 72, min=1, max=100),
+    numericInput("goal", label="Goal/target score", value = NA),
+    numericInput("NBME6", label="NBME 6", value = NA),
+    numericInput("NBME7", label="NBME 7", value = NA),
+    numericInput("NBME8", label="NBME 8", value = NA)
+  ))
+)
+
+renderUI({
+  paste0("Using STEP2 = ", code(paste(input$modelVars, collapse=" + ")),
+         " as input")
+})
+
+  
+renderPrint({ 
+  modelFormula <- as.formula(
+    paste0("STEP2 ~ ", paste(input$modelVars, collapse=" + ")," - 1"))
+  
+  
+  modelFormula
+  })
+# 
+# as.formula(
+#   paste0("STEP2 ~ ", paste(input$modelVars, collapse=" + ")," - 1"))
+
+
+# fluidRow(column(3, verbatimTextOutput("value")))
+
+```
+
+
+
+# Sample linear models
+
+```{r DefineFormula}
+modelFormula <- "STEP2 ~ UW_1 +  UW_FP - 1"
+
+## For testing how many results aren't blank
+# nrow(filter(reddit, !is.na(UWSA2), !is.na(NBME17)))
+```
+
+Using the formula: <code> `r modelFormula` </code>
+
+```{r DefineModel}
+### Sample linear models
+modelFormula <- as.formula(modelFormula)
+lm2 <- lm(modelFormula, data = reddit) #define model
+summary(lm2)
+# coefficients(lm2)
+# residuals(lm2)
+# fitted(lm2)
+```
+
+## Predicted scores
+
+This predicts our scores (based on the model above)
+
+```{r PredictScoreTable}
+
+inputScores <- data_frame(
+  Person = c("Hunter", "Laura", "Wes", "Test"),
+  UW_1   = c(260, NA, NA, 260),
+  # UW_2   = c(NA, NA, NA, 260),
+  UW_FP  = c(0.741, NA, NA, 0.741),
+  # NBME_6 = c(NA, NA, NA, NA),
+  # NBME_7 = c(NA, NA, NA, NA),
+  # NBME_8 = c(NA, NA, NA, NA),
+  Goal   = c(260, NA, NA, NA)
+)
+
+inputScores <- inputScores %>%
+  bind_cols() %>%
+  data.frame(
+    predict(lm2, inputScores, interval = "prediction", level=.95)
+  )
+inputScores %>% 
+  mutate(
+    fit = round(fit),
+    lwr = round(lwr),
+    upr = round(upr)
+  ) %>%
+  rename(`Fitted score`=fit, `Lower 95% CI`=lwr, `Upper 95% CI`=upr) %>%
+  knitr::kable(caption = "Predicted scores")    
+```
+
+## Validate model
+
+
+
+
+
+
+
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r eruptions, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+
+
+

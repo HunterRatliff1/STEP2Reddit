@@ -1,0 +1,13 @@
+name: STEP2Reddit
+title: STEP2Reddit
+username:
+account: anonymousaccount
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1041945
+bundleId: 2248141
+url: https://anonymousaccount.shinyapps.io/STEP2Reddit/
+when: 1563560845.78811
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Reddit STEP 2.Rmd

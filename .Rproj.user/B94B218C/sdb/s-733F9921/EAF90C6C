@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1563571890784.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "EAF90C6C",
+    "lastKnownWriteTime" : 3617857486408988769,
+    "last_content_update" : 1563571890784,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "CDE1A830",
+        "caption" : "masterDf",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=masterDf&cache_key=CDE1A830",
+        "displayedObservations" : 3269,
+        "environment" : "",
+        "object" : "masterDf",
+        "preview" : 0,
+        "totalObservations" : 3269,
+        "variables" : 26
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

@@ -31,7 +31,7 @@ reddit <- reddit %>%
 shinybootstrap2::withBootstrap2(shinyUI(fluidPage(
 
   # Application title
-  titlePanel("STEP 2 CK Score Linear Model"),
+  titlePanel("STEP 2 CK Score Linear Model (2018)"),
 
   # Sidebar with a slider input for number of bins
   sidebarLayout(
@@ -44,7 +44,10 @@ shinybootstrap2::withBootstrap2(shinyUI(fluidPage(
         numericInput("Goal", label="Goal/target score", value = NA),
         numericInput("NBME_6", label="NBME 6", value = NA),
         numericInput("NBME_7", label="NBME 7", value = NA),
-        numericInput("NBME_8", label="NBME 8", value = NA)
+        numericInput("NBME_8", label="NBME 8", value = NA),
+        p(a(href="https://www.reddit.com/r/Step2/comments/ansibd/step2_ck_2018_correlation_survey_results/",
+            "Reddit thread")),
+        actionButton("help", "Help")
     ),
 
     # Show a plot of the generated distribution
@@ -98,7 +101,16 @@ shinybootstrap2::withBootstrap2(shinyUI(fluidPage(
       p("Your projected score is in red. The grey points/bars represent the data from the reddit
         survey for comparison"),
       hr(),
-      h3("Summary of linear model"),
+      h3("Summary of the model"),
+      p("Below is a summary of the current model, which isn't very easy to read,
+        so here's the TL;DR:"),
+      p(strong("Call:"), "This is the formula which is shown up above. It does",
+        HTML("<u>not</u>"), "include an intercept"),
+      p(strong("Residuals:"), "Self-explanatory"),
+      p(strong("Coefficients:"), "See table below. Variables that have a colon 
+        between them represents the interaction between/among variables (e.g.",
+        code("UW_1 : UW_2"), "represents the interactions between these two tests)."),
+      tableOutput("coeffDf"),
       verbatimTextOutput("modSummary")
     )
   )

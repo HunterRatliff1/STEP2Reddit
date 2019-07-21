@@ -26,12 +26,9 @@ reddit <- reddit %>%
 
 shinyServer(function(input, output) {
   
-  # observeEvent({input$modelVars,{
-  #   modalDialog("info here", title = NULL, footer = modalButton("Dismiss"),
-  #               size = c("m", "s", "l"), easyClose = FALSE)
-  # }
-  # })
   
+  
+  # Dynamic UI checkboxes
   output$dynamicCheckbox <- renderUI({
     options <- c("UWSA 1"="UW_1", "UWSA 2"="UW_2",
                  "UW First pass"="UW_FP", "Goal score"="Goal",
@@ -48,13 +45,10 @@ shinyServer(function(input, output) {
     if(!is.numeric(input$NBME_8)) {toRemove <- c(toRemove, "NBME_8")}
     
     options <- options[ - which(options %in% toRemove)]
-    # options <- setdiff(options, toRemove)
     
-    
-    
-    
+    # Render UI
     checkboxGroupInput("modelVars", h3("Score(s) to include in model"),
-                       inline=F,  selected = c("UWSA 1"="UW_1"),
+                       inline=F,  selected = options,
                        choices = options)
   })
   
@@ -64,7 +58,7 @@ shinyServer(function(input, output) {
   
   modelObj <- reactive({  # Expression that generates the model
     lm(as.formula(paste0(
-      "STEP2 ~ ", paste(input$modelVars, collapse=" + ")," - 1")), data = reddit)
+      "STEP2 ~ ", paste(input$modelVars, collapse="*")," - 1")), data = reddit)
   })
   
   inScores <- reactive({  # Inputs from user of scores
@@ -115,6 +109,28 @@ shinyServer(function(input, output) {
     
   })
   
+  # ---- Help modal
+  observeEvent(input$help, {
+    showModal(modalDialog(title="How this works", size="m", easyClose=T,
+                p("First, input your scores from all of the practice tests you've taken",
+                  "in their respective boxes on the left of the page."), 
+                p("You can then generate a linear model that predicts your score by checking the",
+                  "checkboxes at the top of the page for whichever practice tests you want to include.",
+                  strong("Entering your scores in the sidebar does", tags$u("not"),
+                         "include them in the model;"),"you must", strong("use the checkboxes."),
+                  "The confidence interval can be adjusted using the slider in the left-upper corner"),
+                hr(),
+                p("Keep in mind that there is a tradeoff between a more complex model and",
+                  "the sample size. More complex models (e.g. including all five practice tests)", 
+                  "have fewer responses included, because they only include survey responses from",
+                  "people who took all five practice tests (in this case, only 15% of the dataset).",
+                  "So it's best to stick to one or two variables (e.g.", code("UW_1"),"+", code("UW_2"), 
+                  ", which includeds 80% of the dataset)."
+                )
+                
+    ))
+  })
+  
   # ---- Graph
   output$graph <- renderPlot({  # Prints test stuff
     df<-inScores()
@@ -151,6 +167,7 @@ shinyServer(function(input, output) {
     }
   })
   
+  # ---- Dropped bar
   output$graphDrop <- renderPlot({
     total <- nrow(filter(reddit, STEP2>200))
     missing <- total - nobs(modelObj())
@@ -192,7 +209,7 @@ shinyServer(function(input, output) {
     paste0(nobs, " of ", total)
   })
   
-  output$redditModel <- renderUI({
+  output$redditModel <- renderUI({  # output scores from reddit's equations
     
     df <- data_frame(
       NameOfTest = c("UWSA 1", "UWSA 2", "UW first pass", 
@@ -212,15 +229,21 @@ shinyServer(function(input, output) {
     textOut <- str_c(df$TextOut)
     HTML(textOut)
     
-    
-    
   })
   
   output$modFormula <- renderText({  # Outputs the selected formula as text
     paste(input$modelVars, collapse=" + ")
   })
   
-  output$modSummary <- renderPrint({  # Prints summary of model
+  output$coeffDf <- renderTable(digits=5, {  # Outputs the coefficients of model as table
+    mod <- modelObj() 
+    x <- summary(mod)
+    as.data.frame(x$coefficients) %>% 
+      rownames_to_column("Variable") %>% 
+      rename(`p value`=`Pr(>|t|)`)
+  })
+  
+  output$modSummary <- renderPrint({  # Prints raw summary of model
     mod <- modelObj() 
     summary(mod)  # pander::pander()
   })

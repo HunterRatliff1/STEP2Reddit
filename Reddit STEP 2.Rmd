@@ -88,7 +88,7 @@ renderPrint({
 # Sample linear models
 
 ```{r DefineFormula}
-modelFormula <- "STEP2 ~ UW_1 +  UW_FP - 1"
+modelFormula <- "STEP2 ~ UW_1 +  UW_2 - 1"
 
 ## For testing how many results aren't blank
 # nrow(filter(reddit, !is.na(UWSA2), !is.na(NBME17)))

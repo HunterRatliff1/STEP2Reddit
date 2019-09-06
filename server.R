@@ -55,10 +55,9 @@ shinyServer(function(input, output) {
   
   
   # ----- REACTIVES
-  
   modelObj <- reactive({  # Expression that generates the model
     lm(as.formula(paste0(
-      "STEP2 ~ ", paste(input$modelVars, collapse="*")," - 1")), data = reddit)
+      "STEP2 ~ ", paste(input$modelVars, collapse="*"),"- 1")), data = reddit)
   })
   
   inScores <- reactive({  # Inputs from user of scores
@@ -192,6 +191,13 @@ shinyServer(function(input, output) {
   
   
   # ---- Text reactives
+  output$complexWarning <- renderUI({
+    if(length(input$modelVars) > 3){
+     div(class="alert alert-danger", "Warning: Including too many variables in the model makes it act funny,
+      and likely decreases it's accuracy")
+    }
+  })
+  
   output$estScore <- renderText({  # Estimated score
     df<-inScores()
     df["EstScore"][[1]]

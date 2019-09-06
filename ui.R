@@ -29,6 +29,9 @@ reddit <- reddit %>%
 
 
 shinybootstrap2::withBootstrap2(shinyUI(fluidPage(
+  # Google analytics (see http://shiny.rstudio.com/articles/google-analytics.html)
+  tags$head(includeScript("google-analytics.js"),
+            includeScript("https://www.googletagmanager.com/gtag/js?id=UA-144372385-1")),
 
   # Application title
   titlePanel("STEP 2 CK Score Linear Model (2018)"),
@@ -46,7 +49,8 @@ shinybootstrap2::withBootstrap2(shinyUI(fluidPage(
         numericInput("NBME_7", label="NBME 7", value = NA),
         numericInput("NBME_8", label="NBME 8", value = NA),
         p(a(href="https://www.reddit.com/r/Step2/comments/ansibd/step2_ck_2018_correlation_survey_results/",
-            "Reddit thread")),
+            "Source/Reddit thread")),
+        p(HTML("<u>Contact:</u>"), "/u/MomsAgainstMedAdvice"),
         actionButton("help", "Help")
     ),
 
@@ -68,6 +72,10 @@ shinybootstrap2::withBootstrap2(shinyUI(fluidPage(
         column(6, 
                p("Below are the calculated scores based on the equations from Reddit:"),
                htmlOutput("redditModel"),
+               br(),
+               htmlOutput("complexWarning"),
+                   
+                   
                
                modalDialog(title="How this works", size="m", easyClose=T,
                  p("First, input your scores from all of the practice tests you've taken",
